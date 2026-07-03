@@ -1,0 +1,19 @@
+# IDE
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Generated data (optional — remove these lines if you want to track data files)
+# cleaned_data_*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db

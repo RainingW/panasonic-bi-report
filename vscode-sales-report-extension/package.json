@@ -1,0 +1,16 @@
+{
+  "name": "vscode-sales-report",
+  "displayName": "Sales Report Generator",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.60.0" },
+  "activationEvents": ["onCommand:extension.generateSalesReport"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.generateSalesReport",
+        "title": "Generate Sales Report"
+      }
+    ]
+  }
+}

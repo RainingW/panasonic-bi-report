@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>松下冰箱官方旗舰店 · BI经营日报</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    :root{
+      --page-bg: #F5F6FA;
+      --header-bg: #243A8F;
+      --card-bg: #fff;
+      --card-radius: 14px;
+      --card-shadow: 0 2px 10px rgba(0,0,0,.08);
+      --font-main: "Microsoft YaHei","PingFang SC",sans-serif;
+      --primary: #2F6BFF;
+      --success: #28C76F;
+      --warning: #FF9F43;
+      --danger: #EA5455;
+      --accent: #7367F0;
+      --muted: #6E7191;
+    }
+    html,body{height:100%;margin:0;font-family:var(--font-main);background:var(--page-bg);color:#111827;}
+    .app-header{background:var(--header-bg);color:#fff;padding:18px 28px;box-shadow:0 2px 8px rgba(0,0,0,0.12);}
+    .app-brand{display:flex;gap:16px;align-items:center;}
+    .brand-logo{width:48px;height:48px;border-radius:8px;background:linear-gradient(180deg,#2F6BFF,#214ED9);display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.14);color:white;font-size:18px;}
+    .brand-title{font-size:18px;font-weight:700;letter-spacing:0.2px;}
+    .brand-sub{font-size:12px;color:rgba(255,255,255,0.9);}
+    .top-right{margin-left:auto;text-align:right;}
+    .date-pill{background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;font-weight:600;display:inline-block;}
+    .container-xl{max-width:1360px;margin:22px auto;padding:0 18px;}
+    .card-panel{background:var(--card-bg);border-radius:var(--card-radius);box-shadow:var(--card-shadow);padding:16px;transition:transform .3s,box-shadow .3s;}
+    .card-panel:hover{transform:translateY(-3px);}
+    .metrics-row{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:18px;}
+    @media(max-width:1400px){.metrics-row{grid-template-columns:repeat(4,1fr);}}
+    @media(max-width:900px){.metrics-row{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:560px){.metrics-row{grid-template-columns:repeat(1,1fr);}}
+    .metric{padding:14px;border-radius:12px;display:flex;flex-direction:column;gap:8px;}
+    .metric .label{font-size:13px;font-weight:600;color:var(--muted);}
+    .metric .value{font-size:20px;font-weight:700;color:#111827;}
+    .muted-small{color:var(--muted);font-size:12px;}
+    .layout-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:1100px){.layout-grid{grid-template-columns:1fr;}}
+    .charts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+    @media(max-width:900px){.charts-grid{grid-template-columns:1fr;}}
+    .data-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .data-table thead th{position:sticky;top:0;text-align:left;padding:10px 12px;font-weight:700;background:linear-gradient(90deg, rgba(47,107,255,0.06), rgba(115,103,240,0.03));}
+    .data-table tbody tr:nth-child(even){background:rgba(47,107,255,0.02);}
+    .data-table td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,0.04);}
+    .table-scroll{max-height:480px;overflow:auto;border-radius:12px;}
+    .mini-badge{padding:4px 8px;border-radius:999px;font-weight:700;color:white;font-size:12px;}
+    .refund-green{background:#28C76F;} .refund-yellow{background:#FF9F43;} .refund-red{background:#EA5455;}
+    .insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    @media(max-width:1000px){.insights{grid-template-columns:1fr;}}
+    .insight-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.01));}
+    .insight-side{width:6px;height:100%;border-radius:6px;}
+    .insight-body h5{margin:0 0 6px 0;font-weight:700;}
+    .insight-body p{margin:0;color:var(--muted);font-size:13px;}
+    .side-red{background:#EA5455;} .side-yellow{background:#FF9F43;} .side-blue{background:#2F6BFF;} .side-green{background:#28C76F;}
+    .product-highlight{display:flex;gap:16px;align-items:flex-start;}
+    .product-card{flex:0 0 260px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(47,107,255,0.04),rgba(115,103,240,0.02));}
+    .muted-2{color:#7c8296;}.kpi{font-weight:700;font-size:18px;color:#111827;}.kpi-small{font-weight:700;font-size:14px;}
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="container-xl" style="display:flex;gap:16px;align-items:center;">
+      <div class="app-brand">
+        <div class="brand-logo">松</div>
+        <div>
+          <div class="brand-title">松下冰箱官方旗舰店 · BI经营日报</div>
+          <div class="brand-sub">运营数据洞察 · SKU/品类/商品/转化/退款分析</div>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="date-pill" id="reportDate">2026-07-03</div>
+        <div class="muted-small">更新：实时（基于上传数据）</div>
+      </div>
+    </div>
+  </header>
+  <main class="container-xl" style="padding-top:18px;padding-bottom:60px;">
+    <section class="card-panel" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="font-weight:700;font-size:16px;">核心指标</div>
+        <div class="muted-small">自动计算 | 支持导入数据</div>
+      </div>
+      <div class="metrics-row" id="metricsRow"></div>
+    </section>
+    <section class="layout-grid">
+      <div>
+        <div class="charts-grid">
+          <div class="card-panel" style="min-height:320px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">销售占比</div><div class="muted-small">按品类</div></div>
+            <div id="chartSalesShare" style="height:260px;"></div>
+          </div>
+          <div class="card-panel" style="min-height:320px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">流量来源</div><div class="muted-small">来源分布</div></div>
+            <div id="chartTraffic" style="height:260px;"></div>
+          </div>
+          <div class="card-panel" style="min-height:320px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">核心指标对比</div><div class="muted-small">按品类</div></div>
+            <div id="chartBarCompare" style="height:260px;"></div>
+          </div>
+          <div class="card-panel" style="min-height:320px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">趋势分析</div><div class="muted-small">近30天</div></div>
+            <div id="chartTrend" style="height:260px;"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-panel" style="margin-bottom:16px;min-height:320px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">商品 TOP1 快速洞察</div><div class="muted-small">自动识别</div></div>
+          <div style="display:flex;gap:12px;">
+            <div class="product-card">
+              <div class="muted-small">TOP1 商品</div>
+              <div style="margin-top:8px;"><div class="kpi" id="top1Name">示例商品 A</div><div class="muted-small">SKU: <span id="top1SKU">A-001</span></div><div style="margin-top:8px;"><div class="kpi-small">销售额: <span id="top1Sales">¥0</span></div><div class="kpi-small">销量: <span id="top1Qty">0</span></div><div class="kpi-small">支付转化率: <span id="top1CVR">0%</span></div></div></div>
+            </div>
+            <div style="flex:1;"><div id="chartFunnel" style="height:260px;"></div></div>
+          </div>
+        </div>
+        <div class="card-panel" style="min-height:260px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-weight:600;">重点商品运营分析</div><div class="muted-small">雷达 & 结论</div></div>
+          <div class="product-highlight">
+            <div style="flex:1 1 50%;min-width:300px;"><div id="chartRadar" style="height:260px;"></div></div>
+            <div style="flex:1 1 50%;"><div id="productAnalysis" style="display:grid;gap:8px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section style="margin-top:16px;" class="card-panel">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><div style="font-weight:600;">品类分析</div><div class="muted-small">完整数据表（可排序）</div></div>
+      <div class="table-scroll"><table class="data-table" id="categoryTable"><thead><tr><th data-key="category" class="sortable">品类</th><th data-key="sales_amount" class="sortable">销售额</th><th data-key="qty" class="sortable">销量</th><th data-key="pay_users" class="sortable">支付人数</th><th data-key="visitors" class="sortable">访客</th><th data-key="cvr" class="sortable">支付转化率</th><th data-key="refund_rate" class="sortable">退款率</th><th data-key="favorites" class="sortable">收藏</th><th data-key="cart_add" class="sortable">加购</th><th data-key="new_user_rate" class="sortable">新客%</th><th data-key="repeat_user_rate" class="sortable">老客%</th><th data-key="sales_share" class="sortable">销售占比</th><th data-key="visitor_share" class="sortable">访客占比</th></tr></thead><tbody id="categoryBody"></tbody></table></div>
+    </section>
+    <section style="margin-top:16px;" class="card-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div style="font-weight:600;">商品排行榜（TOP10）</div><div class="muted-small">按销售额排序</div></div>
+      <div style="overflow:auto;"><table class="data-table" id="productTable"><thead><tr><th>排名</th><th>商品名称</th><th>SKU</th><th>销售额</th><th>销量</th><th>支付人数</th><th>访客</th><th>转化率</th><th>退款率</th><th>加购</th><th>收藏</th></tr></thead><tbody id="productBody"></tbody></table></div>
+    </section>
+    <section style="margin-top:16px;" class="card-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div style="font-weight:600;">运营洞察 & 行动建议</div><div class="muted-small">基于规则的自动生成（至少 10 条）</div></div>
+      <div class="insights" id="insightsArea"></div>
+    </section>
+  </main>
+  <footer style="text-align:center;padding:18px 0;color:#8a8fa6;">松下冰箱官方旗舰店 · BI经营日报 — 由自动化分析引擎生成</footer>
+  <script>
+    const reportData = {"overview": {"date": "2026-06-18 00:00:00", "total_sales": 102675.2, "payment_amount": 102675.2, "refund_amount": 26068.5, "orders": 26, "pay_users": 26, "visitors": 26, "pay_cvr": 3949.0462, "aov": 3949.05, "refund_rate": 0.2025, "add_to_cart": 0, "favorites": 0}, "category": [{"category": "嵌入式冰箱", "sales_amount": 86379, "qty": 18, "pay_users": 18, "visitors": 18, "cvr": 1.0, "refund_rate": 0, "favorites": 0, "cart_add": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"category": "洗碗机", "sales_amount": 11602, "qty": 7, "pay_users": 7, "visitors": 7, "cvr": 1.0, "refund_rate": 0, "favorites": 0, "cart_add": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"category": "厨房冰箱", "sales_amount": 4693, "qty": 1, "pay_users": 1, "visitors": 1, "cvr": 1.0, "refund_rate": 0, "favorites": 0, "cart_add": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}], "products": [{"name": "松下(Panasonic)冰箱Xtra黑布林500升十字一级家用自动制冰大容量", "sku": "", "sales_amount": 32396, "qty": 8, "pay_users": 8, "visitors": 8, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下(Panasonic)冰箱白月光五门515L超薄零嵌入法式无霜自动制冰", "sku": "", "sales_amount": 18279, "qty": 3, "pay_users": 3, "visitors": 3, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下(Panasonic)小法棍Pro风冷415升多门法式冰箱NR-XG42GEA-W", "sku": "", "sales_amount": 14928, "qty": 3, "pay_users": 3, "visitors": 3, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下白月光3.0十字冰箱家用零嵌入自动制冰新一级能效ED51APB-W", "sku": "", "sales_amount": 12598, "qty": 2, "pay_users": 2, "visitors": 2, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下洗碗机台式80℃高温除菌独立烘干家用刷碗机NP-UW5HH1D", "sku": "", "sales_amount": 9736, "qty": 6, "pay_users": 6, "visitors": 6, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下白月光冰箱510L大容量超薄零嵌入十字家用冰箱NR-ED51CSA-W", "sku": "", "sales_amount": 5389, "qty": 1, "pay_users": 1, "visitors": 1, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下(Panasonic)冰箱大白鲸505L超薄大容量嵌入式对开门一级能效", "sku": "", "sales_amount": 4693, "qty": 1, "pay_users": 1, "visitors": 1, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下(Panasonic)冰箱三门300升一级能效自动制冰风冷无霜电冰箱", "sku": "", "sales_amount": 2787, "qty": 1, "pay_users": 1, "visitors": 1, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}, {"name": "松下洗碗机台式5套家用自动智能刷碗机高温除菌小型台面式K8RAH5D", "sku": "", "sales_amount": 1866, "qty": 1, "pay_users": 1, "visitors": 1, "cvr": 1.0, "refund_rate": 0, "cart_add": 0, "favorites": 0, "avg_price": 0, "stay_time": 0, "bounce_rate": 0, "new_user_rate": 0, "repeat_user_rate": 1.0}], "trend": {"days": ["2026-06-18"], "sales": [102675], "visitors": [26]}, "traffic": [{"source": "****", "value": 6}, {"source": "广东省", "value": 5}, {"source": "湖北省", "value": 3}, {"source": "福建省", "value": 3}, {"source": "安徽省", "value": 2}, {"source": "江苏省", "value": 2}, {"source": "上海市", "value": 1}, {"source": "吉林省", "value": 1}, {"source": "浙江省", "value": 1}, {"source": "辽宁省", "value": 1}, {"source": "陕西省", "value": 1}], "funnels": {"exposure": 15000, "visitor": 26, "detail_page": 20, "add_cart": 0, "order": 26, "payment": 25}};
+    function fmtCurrency(v){ return '¥' + (typeof v==='number' ? v.toLocaleString() : v); }
+    function pct(v){ return (v*100).toFixed(1) + '%'; }
+    document.getElementById('reportDate').textContent = reportData.overview.date || new Date().toISOString().slice(0,10);
+    function renderMetrics(){
+      const m = reportData.overview;
+      const items = [
+        {label:'销售额', value: fmtCurrency(m.total_sales)},
+        {label:'支付金额', value: fmtCurrency(m.payment_amount)},
+        {label:'退款金额', value: fmtCurrency(m.refund_amount)},
+        {label:'订单数', value: m.orders},
+        {label:'支付转化率', value: pct(m.pay_cvr)},
+        {label:'访客数', value: m.visitors},
+        {label:'客单价', value: fmtCurrency(m.aov)},
+        {label:'退款率', value: pct(m.refund_rate)},
+        {label:'加购人数', value: m.add_to_cart},
+        {label:'收藏人数', value: m.favorites}
+      ];
+      const row = document.getElementById('metricsRow');
+      row.innerHTML='';
+      items.slice(0,6).forEach(it=>{const el=document.createElement('div');el.className='card-panel metric';el.innerHTML=`<div class="label">${it.label}</div><div class="value">${it.value}</div>`;row.appendChild(el);});
+      if(items.length>6){const moreRow=document.createElement('div');moreRow.style.gridColumn='1 / -1';moreRow.style.display='grid';moreRow.style.gridTemplateColumns='repeat(6,1fr)';moreRow.style.gap='16px';moreRow.style.marginTop='12px';items.slice(6).forEach(it=>{const el=document.createElement('div');el.className='card-panel metric';el.innerHTML=`<div class="label">${it.label}</div><div class="value">${it.value}</div>`;moreRow.appendChild(el);});row.appendChild(moreRow);}
+    }
+    const charts={};
+    function initCharts(){
+      charts.salesShare=echarts.init(document.getElementById('chartSalesShare'));
+      charts.traffic=echarts.init(document.getElementById('chartTraffic'));
+      charts.barCompare=echarts.init(document.getElementById('chartBarCompare'));
+      charts.trend=echarts.init(document.getElementById('chartTrend'));
+      charts.funnel=echarts.init(document.getElementById('chartFunnel'));
+      charts.radar=echarts.init(document.getElementById('chartRadar'));
+      window.addEventListener('resize',()=>{Object.values(charts).forEach(c=>c&&c.resize&&c.resize());});
+    }
+    function renderSalesShare(){const data=reportData.category.map(c=>({name:c.category,value:c.sales_amount}));charts.salesShare.setOption({animationDuration:1000,tooltip:{trigger:'item',formatter:'{b}: {d}%'},legend:{bottom:10,textStyle:{color:'#333'}},series:[{name:'销售占比',type:'pie',radius:['48%','70%'],center:['50%','50%'],avoidLabelOverlap:false,label:{show:false},emphasis:{label:{show:true,fontWeight:700,formatter:'{b}\n{d}%'}},data}],color:['#2F6BFF','#7367F0','#28C76F','#FF9F43','#EA5455']});}
+    function renderTraffic(){const data=reportData.traffic.map(t=>({name:t.source,value:t.value}));charts.traffic.setOption({animationDuration:1000,tooltip:{trigger:'item'},legend:{top:'5%',left:'center'},series:[{name:'流量来源',type:'pie',radius:['45%','70%'],avoidLabelOverlap:false,label:{show:false},data}]});}
+    function renderBarCompare(){const categories=reportData.category.map(c=>c.category);const sales=reportData.category.map(c=>c.sales_amount);const visitors=reportData.category.map(c=>c.visitors);charts.barCompare.setOption({animationDuration:1000,tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},legend:{data:['销售额','访客'],top:8},xAxis:{type:'category',data:categories,axisLabel:{rotate:10}},yAxis:[{type:'value',name:'销售额'},{type:'value',name:'访客',position:'right'}],series:[{name:'销售额',type:'bar',data:sales,itemStyle:{color:'rgba(47,107,255,0.85)'},barMaxWidth:36},{name:'访客',type:'bar',data:visitors,yAxisIndex:1,itemStyle:{color:'rgba(115,103,240,0.8)'}}]});}
+    function renderTrend(){const t=reportData.trend;charts.trend.setOption({animationDuration:1000,tooltip:{trigger:'axis'},legend:{data:['销售额','访客'],top:6},xAxis:{type:'category',data:t.days,boundaryGap:false,axisLabel:{interval:3}},yAxis:{type:'value'},series:[{name:'销售额',type:'line',smooth:true,data:t.sales,itemStyle:{color:'#2F6BFF'},areaStyle:{color:'rgba(47,107,255,0.08)'}},{name:'访客',type:'line',smooth:true,data:t.visitors,itemStyle:{color:'#7367F0'},areaStyle:{color:'rgba(115,103,240,0.06)'}}]});}
+    function renderFunnel(){const f=reportData.funnels;const data=[{name:'曝光',value:f.exposure},{name:'访客',value:f.visitor},{name:'详情页',value:f.detail_page},{name:'加购',value:f.add_cart},{name:'下单',value:f.order},{name:'支付',value:f.payment}];charts.funnel.setOption({animationDuration:1000,tooltip:{trigger:'item'},series:[{name:'转化漏斗',type:'funnel',left:'10%',top:20,bottom:20,width:'80%',minSize:'10%',gap:4,label:{show:true,position:'inside'},labelLine:{length:10,lineStyle:{width:1}},itemStyle:{borderColor:'#fff',borderWidth:1},emphasis:{label:{fontSize:16}},data}]});}
+    function renderRadar(){const top=reportData.products[0];const indicators=[{name:'支付转化率',max:0.2},{name:'加购率',max:1},{name:'收藏率',max:1},{name:'退款率',max:0.3},{name:'客单价',max:6000},{name:'停留时间',max:600},{name:'跳失率',max:1}];const values=[top.cvr||0,(top.cart_add/Math.max(1,top.visitors))||0,(top.favorites/Math.max(1,top.visitors))||0,top.refund_rate||0,top.avg_price||0,top.stay_time||0,top.bounce_rate||0];charts.radar.setOption({animationDuration:1000,tooltip:{},radar:{indicator:indicators,radius:'65%',name:{color:'#333',fontWeight:600}},series:[{type:'radar',data:[{value:values,name:top.name}],itemStyle:{color:'#FF7A45'},areaStyle:{color:'rgba(47,107,255,0.08)'},lineStyle:{color:'rgba(47,107,255,0.9)'}}]});}
+    function renderCategoryTable(){const body=document.getElementById('categoryBody');body.innerHTML=reportData.category.map(c=>`<tr><td>${c.category}</td><td>${fmtCurrency(c.sales_amount)}</td><td>${c.qty}</td><td>${c.pay_users}</td><td>${c.visitors}</td><td>${pct(c.cvr)}</td><td>${pct(c.refund_rate)}</td><td>${c.favorites}</td><td>${c.cart_add}</td><td>${(c.new_user_rate*100).toFixed(1)}%</td><td>${(c.repeat_user_rate*100).toFixed(1)}%</td><td>${((c.sales_amount/totalSales())*100).toFixed(1)}%</td><td>${((c.visitors/totalVisitors())*100).toFixed(1)}%</td></tr>`).join(''); document.querySelectorAll('#categoryTable thead th.sortable').forEach(th=>{th.style.cursor='pointer';th.onclick=()=>sortCategoryBy(th.dataset.key);});}
+    function totalSales(){return reportData.category.reduce((s,c)=>s+c.sales_amount,0)||1;}
+    function totalVisitors(){return reportData.category.reduce((s,c)=>s+c.visitors,0)||1;}
+    function sortCategoryBy(key){if(!sortCategoryBy.direction)sortCategoryBy.direction={};sortCategoryBy.direction[key]=!sortCategoryBy.direction[key];const dir=sortCategoryBy.direction[key]?1:-1;reportData.category.sort((a,b)=>((a[key]??0)>(b[key]??0)?1:-1)*dir);renderCategoryTable();}
+    function renderProductRanking(){const list=reportData.products.slice().sort((a,b)=>b.sales_amount-a.sales_amount).slice(0,10);document.getElementById('productBody').innerHTML=list.map((p,i)=>{const refundCls=p.refund_rate<0.02?'refund-green':(p.refund_rate<0.05?'refund-yellow':'refund-red');return`<tr><td>${i+1}</td><td>${p.name}</td><td>${p.sku}</td><td>${fmtCurrency(p.sales_amount)}</td><td>${p.qty}</td><td>${p.pay_users}</td><td>${p.visitors}</td><td>${pct(p.cvr)}</td><td><span class="mini-badge ${refundCls}">${(p.refund_rate*100).toFixed(1)}%</span></td><td>${p.cart_add}</td><td>${p.favorites}</td></tr>`;}).join('');}
+    function renderTop1(){const top=reportData.products[0];document.getElementById('top1Name').textContent=top.name;document.getElementById('top1SKU').textContent=top.sku;document.getElementById('top1Sales').textContent=fmtCurrency(top.sales_amount);document.getElementById('top1Qty').textContent=top.qty;document.getElementById('top1CVR').textContent=pct(top.cvr);renderFunnel();renderRadar();renderProductAnalysis(top);}
+    function renderProductAnalysis(top){const area=document.getElementById('productAnalysis');area.innerHTML='';const blocks=[];if(top.refund_rate>0.05){blocks.push({type:'red',title:'核心问题',text:`支付后退款率偏高：${(top.refund_rate*100).toFixed(1)}%。建议检查商品描述与售后流程，优先排查物流/货损/商品质量。`});}if(top.bounce_rate>0.4){blocks.push({type:'red',title:'核心问题',text:`详情页跳失率高：${(top.bounce_rate*100).toFixed(1)}%，可能是首屏信息或价格不符。建议优化首屏内容与购买路径。`});}if(top.cvr<0.03){blocks.push({type:'yellow',title:'优化建议',text:`支付转化率较低（${(top.cvr*100).toFixed(1)}%），建议增强用户信任（评价/认证），并尝试限时促销与购物车催付。`});}if((top.cart_add/Math.max(1,top.visitors))>0.15 && top.cvr<0.05){blocks.push({type:'yellow',title:'优化建议',text:'加购率高但支付率低，建议发送付费提醒、优惠券或优化结算流。'});}if(top.stay_time>180){blocks.push({type:'blue',title:'亮点',text:`用户停留时间较高（${top.stay_time}s），说明详情页内容吸引，建议增强转化入口。`});}if(top.avg_price>2500){blocks.push({type:'blue',title:'亮点',text:'客单价高，具备高客单价溢价能力，可考虑分期或延伸服务销售。'});}if(top.new_user_rate && top.new_user_rate>0.5){blocks.push({type:'green',title:'增长机会',text:`新客占比高（${(top.new_user_rate*100).toFixed(1)}%），建议建立私域并做新客留存策略。`});}if(top.favorites/Math.max(1,top.visitors)>0.15){blocks.push({type:'green',title:'增长机会',text:'商品收藏率高，考虑通过个性化触达或限时折扣提高转化。'});}if(blocks.length<4){blocks.push({type:'blue',title:'亮点',text:'商品表现稳定，建议继续保持并关注渠道投放效率。'});}blocks.slice(0,6).forEach(b=>{const side=b.type==='red'?'side-red':(b.type==='yellow'?'side-yellow':(b.type==='green'?'side-green':'side-blue'));const node=document.createElement('div');node.className='insight-card';node.innerHTML=`<div class="insight-side ${side}"></div><div class="insight-body"><h5>${b.title}</h5><p>${b.text}</p></div>`;area.appendChild(node);});}
+    function generateInsights(){const insights=[];const ov=reportData.overview;const avgNewRate=Math.max(0,reportData.category.reduce((s,c)=>s+c.new_user_rate,0)/reportData.category.length);const traffic=reportData.traffic.slice().sort((a,b)=>b.value-a.value);if(ov.refund_rate>0.2){insights.push({level:'red',title:'退款率异常',text:`退款率高达 ${(ov.refund_rate*100).toFixed(1)}%，需优先排查物流与商品质量问题`});}else if(ov.refund_rate>0.05){insights.push({level:'yellow',title:'退款率偏高',text:`退款率 ${(ov.refund_rate*100).toFixed(1)}%，建议分析高退款品类与SKU`});}else{insights.push({level:'green',title:'退款率正常',text:`当前退款率 ${(ov.refund_rate*100).toFixed(1)}%，在可接受范围`});}if(ov.pay_cvr<0.02){insights.push({level:'red',title:'支付转化率低',text:`支付转化率 ${(ov.pay_cvr*100).toFixed(2)}%，建议优化详情页、增加评价与促销活动`});}else if(ov.pay_cvr<0.04){insights.push({level:'yellow',title:'支付转化率需提升',text:`当前 ${(ov.pay_cvr*100).toFixed(2)}%，适合做A/B测试详情页`});}else{insights.push({level:'green',title:'支付转化率良好',text:`支付转化率 ${(ov.pay_cvr*100).toFixed(2)}%，渠道投放高效`});}if(ov.aov>3000){insights.push({level:'blue',title:'客单价高',text:`客单价 ${fmtCurrency(ov.aov)}，可尝试延伸服务或分期产品`});}else{insights.push({level:'green',title:'客单价正常',text:`客单价 ${fmtCurrency(ov.aov)}，建议观察促销对客单价影响`});}if(ov.visitors>10000&&ov.pay_cvr<0.03){insights.push({level:'red',title:'流量高但成交低',text:'流量充足但转化偏低，建议重点优化详情页和购买流程'});}if(avgNewRate>0.5){insights.push({level:'blue',title:'新客占比高',text:`新客占比 ${(avgNewRate*100).toFixed(1)}%，建议开展新客转化及拉新留存策略`});}else{insights.push({level:'green',title:'老客贡献稳定',text:'老客留存比例较高，可做会员增值服务'});}const sortedCat=reportData.category.slice().sort((a,b)=>b.sales_amount-a.sales_amount);const topCat=sortedCat[0];if(topCat){insights.push({level:'blue',title:`品类 ${topCat.category} 领跑`,text:`${topCat.category} 销售占比最高，建议保证库存与重点促销`});}const topProduct=reportData.products[0];if(topProduct.refund_rate>0.05){insights.push({level:'red',title:'TOP 商品退款率高',text:`${topProduct.name} 退款率 ${(topProduct.refund_rate*100).toFixed(1)}%，需尽快核查售后与质量问题`});}if(ov.add_to_cart>ov.orders*1.2){insights.push({level:'yellow',title:'加购高支付低',text:'加购人数显著高于支付人数，建议做催付并测试限时优惠券'});}else{insights.push({level:'green',title:'加购与支付匹配',text:'加购与支付比例正常'});}if(traffic[0]&&traffic[0].source==='自然搜索'){insights.push({level:'green',title:'自然搜索占比高',text:'自然搜索为主要流量来源，建议继续SEO与内容投入'});}if(ov.refund_rate>0.05||ov.pay_cvr<0.02){insights.push({level:'red',title:'P0: 立即处理',text:'优先处理退款与转化相关问题（详情页/物流/售后）'});}else{insights.push({level:'blue',title:'P1: 建议优化',text:'可优化活动投放与会员体系以提升长期转化'});}while(insights.length<10){insights.push({level:'blue',title:'观察项',text:'持续监控广告转化成本与渠道效率，优化ROI'});}const area=document.getElementById('insightsArea');area.innerHTML='';const colorMap={red:'side-red',yellow:'side-yellow',blue:'side-blue',green:'side-green'};insights.forEach(ins=>{const side=colorMap[ins.level]||'side-blue';const node=document.createElement('div');node.className='insight-card';node.innerHTML=`<div class="insight-side ${side}"></div><div class="insight-body"><h5>${ins.title}</h5><p>${ins.text}</p></div>`;area.appendChild(node);});}
+    function renderAll(){renderMetrics();if(!charts.salesShare)initCharts();renderSalesShare();renderTraffic();renderBarCompare();renderTrend();renderTop1();renderCategoryTable();renderProductRanking();generateInsights();}
+    renderAll();
+  </script>
+</body>
+</html>
